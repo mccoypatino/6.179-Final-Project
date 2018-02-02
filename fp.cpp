@@ -40,7 +40,7 @@ struct Weapon {
 
 // This is the general monster object, which will take on
 // appropriate stats according to which monster appears
-// (which is determined probabilistically
+// (which is determined probabilistically)
 struct Monster
 {
     int health;
@@ -97,11 +97,11 @@ Monster init_monster() {
     // Initialize random seed:
     srand (time(NULL));
     int random = rand() % 101;
-    if (random <= 50) {
+    if (random <= 44) {
         Goblin* goblin = new Goblin;
         Monster monster = Monster(goblin->health, goblin->attack, goblin->name);
         return monster;
-    } else if ((random > 50) && (random <= 95)) {
+    } else if ((random > 44) && (random <= 89)) {
         Imp* imp = new Imp;
         Monster monster = Monster(imp->health, imp->attack, imp->name);
         return monster;
@@ -146,14 +146,14 @@ Monster set_monster_health(Monster monster, int damage) {
 void wait() {
     int pass = 0;
     string input;
-    cout << endl << "[Type \"next\" to continue]" << endl;
+    cout << endl << "[Type \"next\" or \"N\" to continue]" << endl;
     do {
         cin >> input;
         std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-        if (input == "next") {
+        if ((input == "next") || (input == "n")) {
             pass = 1;
         } else {
-            cout << "[Type \"next\" to continue]" << endl;
+            cout << "[Type \"next\" or \"N\" to continue]" << endl;
         }
     } while (!pass);
 }
@@ -166,6 +166,28 @@ void status_report(Self self) {
     }
 }
 
+void total_stats(int kill, bool report) {
+    static int monsters_killed = 0;
+    monsters_killed = monsters_killed + kill;
+    if (report) {
+        cout << endl << endl << "***********************************" << endl << "You've killed " << monsters_killed << " monsters in total!" << endl << "***********************************" << endl << endl;
+    }
+}
+
+void game_stats(int kill, bool reset) {
+    static int monsters_killed = 0;
+    if (!reset) {
+        monsters_killed = monsters_killed + 1;
+        total_stats(1, 0);
+    } else {
+        monsters_killed = 0;
+        total_stats(0, 1);
+    }
+    if ((monsters_killed != 0) && (monsters_killed % 10 == 0)) {
+        cout << endl << endl << "*********************************************" << endl << "You've killed " << monsters_killed << " monsters this game! Keep it up!" << endl << "*********************************************" << endl << endl;
+    }
+}
+
 int main() {
     // Stat and object initialization for each weapon
     Self self = Self();
@@ -175,7 +197,7 @@ int main() {
     Weapon* cur_weapon = new Weapon;
     
     // Choose weapon
-    cout << "\"Hello, traveler - I see you're trekking these lands with no gear. It's dangerous to go alone! Take one of these:\"" << endl << endl << "Sword: powerful, but has little range" << endl << "Staff: somewhat powerful, and has moderately ranged magic" << endl << "Bow: weaker than the others, but has excellent range" << endl << endl << "Type the name of the weapon that you would like to take." << endl;
+    cout << endl << "-------------------------" << endl << "\"Hello, traveler - I see you're trekking these lands with no gear. It's dangerous to go alone! Take one of these:\"" << endl << endl << "Sword: powerful, but has little range" << endl << "Staff: somewhat powerful, and has moderately ranged magic" << endl << "Bow: weaker than the others, but has excellent range" << endl << endl << "Type the name of the weapon that you would like to take." << endl;
     bool pass = 0;
     string input;
     do {
@@ -214,14 +236,12 @@ int main() {
             cout << endl << "-------------------------" << endl << "You take the path to the left, and walk for a few minutes before arriving at the mouth of a great forest. From within the darkness," << endl << "you can hear the buzzing of insects, cawing of birds, and intermittent growls of some unknown creatures." << endl << "You gather your courage, take a deep breath, and step in." << endl;
         } else if ((input == "mountains") || (input == "mountain")) {
             pass = 1;
-            cout << endl << "-------------------------" << endl << "You take the path to the right, and walk for a few minutes before arriving at the base of a towering mountain range." << endl << "Between two mountains, there is a winding and steadily climbing footpath. You hear distant roaring -" << endl << "of dragons, surely - and the occasional sound of rocks tumbling down the mountains' sheer faces. As for whether" << endl << "you're alone on this narrow path, that much is unknown. You gather your courage, take a deep breath, and start up the winding road." << endl;
+            cout << endl << "-------------------------" << endl << "You take the path to the right, and walk for a few minutes before arriving at the base of a towering mountain range." << endl << "Between two mountains, there is a winding and steadily climbing footpath. You hear distant roaring - of dragons," << endl << "surely - and the occasional sound of rocks tumbling down the mountains' sheer faces. As for whether you're alone" << endl << "on this narrow path, that much is unknown. You gather your courage, take a deep breath, and start up the winding road." << endl;
         } else if ((input == "go home") || (input == "home") || (input == "turn around") || (input == "neither")) {
             cout << endl << "-------------------------" << endl << "You stare at the sign for some time, contemplating the state of your life and the choices you've made. After thorough introspection," << endl << "you realize that you never wanted to be an adventurer in the first place. The search for glory that you committed your life to has all been" << endl << "an ill-fated attempt to make up for the inadequacy you've always felt since being the last one picked for your elementary school gym class' kickball games." << endl << "No number of slain dragons or looted treasures can adequately fill the gaping void in your heart, and that is finally clear. You strip off your metal armor," << endl << "lay down your weapon, turn on your heel, and walk home." << endl;
             wait();
-            cout << endl << "Type Control+C to give up and start over" << endl;
-            while (!pass) {
-                continue;
-            }
+            cout << endl << "After spending some years at home and seeing a therapist to talk about your self-image issues, you at last regain your passion for life and adventure." << endl << "You walk back to the crossroads where you left your gear and dust it off before putting it back on. You decide that since you're aiming for new" << endl << "heights in your personal and professional life, you should venture into the mountains." << endl;
+            pass = 1;
         } else {
             cout << endl << "That is not a viable option. Please specify which path you would like to follow." << endl;
         }
@@ -239,19 +259,20 @@ int main() {
             // Handler for interaction while health is less than full
             if ((self.health < 100) && (self.potions > 0)) {
                 do {
-                    cout << endl << "Attack" << endl << "Potion" << endl;
+                    cout << endl << "Attack (A)" << endl << "Potion (P)" << endl;
                     cin >> input;
                     std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-                    if (input == "attack") {
+                    if ((input == "attack") || (input == "a")) {
                         monster = set_monster_health(monster, cur_weapon->damage);
                         cout << endl << "You dealt " << cur_weapon->damage << " damage!";
                         if (monster.health > 0) {
                             cout << " The " << monster.name << " now has " << monster.health << " HP." << endl;
                         } else {
                             cout << " You've slain the monster!" << endl;
+                            game_stats(1, 0);
                         }
                         pass = 1;
-                    } else if (input == "potion") {
+                    } else if ((input == "potion") || (input == "p")) {
                         self = use_potion(self);
                         cout << endl << "You used a potion and now have " << self.health << " HP." << endl;
                         pass = 1;
@@ -265,19 +286,20 @@ int main() {
             // Handler for interaction while health is full and there are potions
             else if ((self.health == 100) && (self.potions > 0)) {
                 do {
-                    cout << endl << "Attack" << endl;
+                    cout << endl << "Attack (A)" << endl;
                     cin >> input;
                     std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-                    if (input == "attack") {
+                    if ((input == "attack") || (input == "a")) {
                         monster = set_monster_health(monster, cur_weapon->damage);
                         cout << endl << "You dealt " << cur_weapon->damage << " damage!";
                         if (monster.health > 0) {
                             cout << " The " << monster.name << " now has " << monster.health << " HP." << endl;
                         } else {
                             cout << " You've slain the monster!" << endl;
+                            game_stats(1, 0);
                         }
                         pass = 1;
-                    } else if (input == "potion") {
+                    } else if ((input == "potion") || (input == "p")) {
                         cout << endl << "You can't use a potion while your health is full! Which of the following actions would you like to perform?" << endl;
                     } else {
                         cout << endl << "You can't do that! Which of the following actions would you like to perform?" << endl;
@@ -289,19 +311,20 @@ int main() {
             // Handler for interaction while health is full, there are no potions, and the user is being cheeky
             else if ((self.health == 100) && (self.potions == 0)) {
                 do {
-                    cout << endl << "Attack" << endl;
+                    cout << endl << "Attack (A)" << endl;
                     cin >> input;
                     std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-                    if (input == "attack") {
+                    if ((input == "attack") || (input == "a")) {
                         monster = set_monster_health(monster, cur_weapon->damage);
                         cout << endl << "You dealt " << cur_weapon->damage << " damage!";
                         if (monster.health > 0) {
                             cout << " The " << monster.name << " now has " << monster.health << " HP." << endl;
                         } else {
                             cout << " You've slain the monster!" << endl;
+                            game_stats(1, 0);
                         }
                         pass = 1;
-                    } else if (input == "potion") {
+                    } else if ((input == "potion") || (input == "p")) {
                         cout << endl << "You can't use a potion while your health is full - but you don't have any potions anyway!" << endl << "Which of the following actions would you like to perform?" << endl;
                     } else {
                         cout << endl << "You can't do that! Which of the following actions would you like to perform?" << endl;
@@ -313,19 +336,20 @@ int main() {
             // Handler for interaction while health isn't full but there are no potions
             else {
                 do {
-                    cout << endl << "Attack" << endl;
+                    cout << endl << "Attack (A)" << endl;
                     cin >> input;
                     std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-                    if (input == "attack") {
+                    if ((input == "attack") || (input == "a")) {
                         monster = set_monster_health(monster, cur_weapon->damage);
                         cout << endl << "You dealt " << cur_weapon->damage << " damage!";
                         if (monster.health > 0) {
                             cout << " The " << monster.name << " now has " << monster.health << " HP." << endl;
                         } else {
                             cout << " You've slain the monster!" << endl;
+                            game_stats(1, 0);
                         }
                         pass = 1;
-                    } else if (input == "potion") {
+                    } else if ((input == "potion") || (input == "p")) {
                         cout << endl << "You don't have any potions! Which of the following actions would you like to perform?" << endl;
                     } else {
                         cout << endl << "You can't do that! Which of the following actions would you like to perform?" << endl;
@@ -344,34 +368,76 @@ int main() {
                     status_report(self);
                     cout << endl << "-------------------------";
                 } else {
-                    cout << endl << "You're out of HP!" << endl << "..." << endl << "You whited out!" << endl;
+                    cout << endl << endl << endl << "You're out of HP!" << endl << "..." << endl << "You whited out!" << endl;
+                    game_stats(0, 1);
                 }
             } else {
                 continue;
             }
         }
         
+        // Chance of getting potion after battle
+        // Initialize random seed:
+        srand (time(NULL));
+        int random = rand() % 101;
+        if (random <= 10) {
+            self = get_potion(self, 1);
+            cout << endl << "The monster dropped a potion! You add it to your inventory." << endl;
+            status_report(self);
+        } else if (random == 11) {
+            self = get_potion(self, 2);
+            cout << endl << "The monster dropped two (2) potions! You add them to your inventory." << endl;
+            status_report (self);
+        }
+        
         // Recovery period after battle
         if ((self.potions > 0) && (self.health > 0)) {
-            cout << endl << "Would you like to use a potion? (Y/N)" << endl;
-            do {
-                cin >> input;
-                std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-                if ((input == "y") || (input == "yes")) {
-                    self = use_potion(self);
-                    status_report(self);
-                    pass = 1;
-                } else if ((input == "n") || (input == "no")) {
-                    cout << endl << "You ready yourself and continue on down the path." << endl;
-                    pass = 1;
+            while ((self.potions > 0) && (self.health < 100)) {
+                do {
+                    cout << endl << "Would you like to use a potion? (Y/N)" << endl;
+                    cin >> input;
+                    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+                    if ((input == "y") || (input == "yes")) {
+                        cout << endl << "You use a potion and regain some health." << endl;
+                        self = use_potion(self);
+                        status_report(self);
+                        pass = 1;
+                        wait();
+                    } else if ((input == "n") || (input == "no")) {
+                        cout << endl << "You ready yourself and continue on down the path." << endl;
+                        pass = 1;
+                        wait();
+                    } else {
+                        cout << endl << "Command not recognized!" << endl;
+                    }
+                } while (!pass);
+                pass = 0;
+                if ((self.potions == 0) || (input == "n") || (input == "no")) {
+                    break;
                 } else {
-                    cout << endl << "Command not recognized! Would you like to use a potion? (Y/N)" << endl;
+                    continue;
                 }
-            } while (!pass);
-            pass = 0;
+            }
         } else if ((self.potions == 0) && (self.health > 0)) {
             cout << endl << "You rest for a short while, and then continue on down the path." << endl;
+            wait();
         }
     }
+    
+    // End of game handler
+    cout << endl << "Would you like to play again? (Y/N)" << endl;
+    do {
+        cin >> input;
+        std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+        if ((input == "y") || (input == "yes")) {
+            main();
+        } else if ((input == "n") || (input == "no")) {
+            cout << endl << "Thank you for playing!" << endl;
+            pass = 1;
+        } else {
+            cout << endl << "Command not recognized! Would you like to play again? (Y/N)" << endl;
+        }
+    } while (!pass);
+    pass = 0;
     return 0;
 }
