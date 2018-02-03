@@ -96,7 +96,7 @@ struct Dragon : Monster
 Monster init_monster() {
     // Initialize random seed:
     srand (time(NULL));
-    int random = rand() % 101;
+    int random = rand() % 100;
     if (random <= 44) {
         Goblin* goblin = new Goblin;
         Monster monster = Monster(goblin->health, goblin->attack, goblin->name);
