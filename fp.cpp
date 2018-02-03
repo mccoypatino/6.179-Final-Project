@@ -166,6 +166,16 @@ void status_report(Self self) {
     }
 }
 
+int progress(int kill, bool reset) {
+    static int kill_total = 0;
+    if (!reset) {
+        kill_total = kill_total + kill;
+    } else {
+        kill_total = 0;
+    }
+    return kill_total;
+}
+
 void total_stats(int kill, bool report) {
     static int monsters_killed = 0;
     monsters_killed = monsters_killed + kill;
@@ -176,12 +186,15 @@ void total_stats(int kill, bool report) {
 
 void game_stats(int kill, bool reset) {
     static int monsters_killed = 0;
+    int prog;
     if (!reset) {
-        monsters_killed = monsters_killed + 1;
+        monsters_killed = monsters_killed + kill;
         total_stats(1, 0);
+        prog = progress(1, 0);
     } else {
         monsters_killed = 0;
         total_stats(0, 1);
+        prog = progress(0, 1);
     }
     if ((monsters_killed != 0) && (monsters_killed % 10 == 0)) {
         cout << endl << endl << "*********************************************" << endl << "You've killed " << monsters_killed << " monsters this game! Keep it up!" << endl << "*********************************************" << endl << endl;
@@ -270,6 +283,31 @@ int main() {
                         } else {
                             cout << " You've slain the monster!" << endl;
                             game_stats(1, 0);
+                            int prog = progress(0, 0);
+                            if (prog == 7) {
+                                cout << endl << endl << "-------------------------" << endl << "Squinting into the distance, you can make out the faint outline of a tall structure. What could it be, and what could be inside?" << endl;
+                            } else if (prog == 15) {
+                                cout << endl << endl << "-------------------------" << endl << "You now can clearly see a castle in the near distance - no more than 300 yards away. Is it full of treasure?" << endl << "Is it empty? Or does a more terrible monster than any you've faced reside in those walls?" << endl;
+                            } else if (prog == 19) {
+                                cout << endl << endl << "-------------------------" << endl << "You stand mere meters away from the great entrance to the towering castle. Only one more monster stands between" << endl << "you and whatever is inside. Can you survive one last battle?" << endl;
+                            } else if (prog == 20) {
+                                cout << endl << endl << "-------------------------" << endl << "You defeat the last monster, and the path to the castle is at last unobstructed. You tidy up your armor, open the" << endl << "great steel door, and stride through the open doorway. The air smells dusty and ancient in your nostrils, as if you're" << endl << "the first soul to enter this great room in centuries. The ceiling is at least 30 meters high, and a faded," << endl << "ornate, red rug leads from the entrance up a flight of stairs." << endl;
+                                wait();
+                                cout << endl << "You climb the staircase and find yourself 20 meters away from a regal throne. Sitting in the seat, rather than a person, is" << endl << "an open chest. From where you stand, you can make out a pile of gold within the chest, and the glint of (likely)" << endl << "priceless jewels. You're overcome with emotion, thinking about all of the trials and tribulations you persevered" << endl << "through to get here. In this moment, you know it was all worth it, and tears stream down your cheeks. You raise your" << endl << "face to the heavens and let out a cry of victory, at last feeling that you've accomplished everything you've wanted to in this life." << endl << endl << endl << "Suddenly, you hear creaking in the ancient walls of the castle. It seems that the reverberations of your triumphant cry have pushed" << endl << "this tired foundation past its limits. In horror, you watch the ceiling above you crumble and open to expose the sky above." << endl << "You can't tell if it's the sound of the crumbling walls, but you hear a deep rumble that for a moment sounds like" << endl << "God himself is laughing at your untimely hubris." << endl << endl << endl << "A great chunk of the ceiling falls on your head, and you die instantly." << endl;
+                                wait();
+                                cout << endl << "Would you like to play again? (Y/N)" << endl;
+                                do {
+                                    cin >> input;
+                                    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+                                    if ((input == "y") || (input == "yes")) {
+                                        main();
+                                    } else if ((input == "n") || (input == "no")) {
+                                        cout << endl << "I think you should play again. Would you like to play again? (Y)" << endl;
+                                    } else {
+                                        cout << endl << "Command not recognized! Would you like to play again? (Y/N)" << endl;
+                                    }
+                                } while (!pass);
+                            }
                         }
                         pass = 1;
                     } else if ((input == "potion") || (input == "p")) {
@@ -297,6 +335,31 @@ int main() {
                         } else {
                             cout << " You've slain the monster!" << endl;
                             game_stats(1, 0);
+                            int prog = progress(0, 0);
+                            if (prog == 7) {
+                                cout << endl << endl << "-------------------------" << endl << "Squinting into the distance, you can make out the faint outline of a tall structure. What could it be, and what could be inside?" << endl;
+                            } else if (prog == 15) {
+                                cout << endl << endl << "-------------------------" << endl << "You now can clearly see a castle in the near distance - no more than 300 yards away. Is it full of treasure?" << endl << "Is it empty? Or does a more terrible monster than any you've faced reside in those walls?" << endl;
+                            } else if (prog == 19) {
+                                cout << endl << endl << "-------------------------" << endl << "You stand mere meters away from the great entrance to the towering castle. Only one more monster stands between" << endl << "you and whatever is inside. Can you survive one last battle?" << endl;
+                            } else if (prog == 20) {
+                                cout << endl << endl << "-------------------------" << endl << "You defeat the last monster, and the path to the castle is at last unobstructed. You tidy up your armor, open the" << endl << "great steel door, and stride through the open doorway. The air smells dusty and ancient in your nostrils, as if you're" << endl << "the first soul to enter this great room in centuries. The ceiling is at least 30 meters high, and a faded," << endl << "ornate, red rug leads from the entrance up a flight of stairs." << endl;
+                                wait();
+                                cout << endl << "You climb the staircase and find yourself 20 meters away from a regal throne. Sitting in the seat, rather than a person, is" << endl << "an open chest. From where you stand, you can make out a pile of gold within the chest, and the glint of (likely)" << endl << "priceless jewels. You're overcome with emotion, thinking about all of the trials and tribulations you persevered" << endl << "through to get here. In this moment, you know it was all worth it, and tears stream down your cheeks. You raise your" << endl << "face to the heavens and let out a cry of victory, at last feeling that you've accomplished everything you've wanted to in this life." << endl << endl << endl << "Suddenly, you hear creaking in the ancient walls of the castle. It seems that the reverberations of your triumphant cry have pushed" << endl << "this tired foundation past its limits. In horror, you watch the ceiling above you crumble and open to expose the sky above." << endl << "You can't tell if it's the sound of the crumbling walls, but you hear a deep rumble that for a moment sounds like" << endl << "God himself is laughing at your untimely hubris." << endl << endl << endl << "A great chunk of the ceiling falls on your head, and you die instantly." << endl;
+                                wait();
+                                cout << endl << "Would you like to play again? (Y/N)" << endl;
+                                do {
+                                    cin >> input;
+                                    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+                                    if ((input == "y") || (input == "yes")) {
+                                        main();
+                                    } else if ((input == "n") || (input == "no")) {
+                                        cout << endl << "I think you should play again. Would you like to play again? (Y)" << endl;
+                                    } else {
+                                        cout << endl << "Command not recognized! Would you like to play again? (Y/N)" << endl;
+                                    }
+                                } while (!pass);
+                            }
                         }
                         pass = 1;
                     } else if ((input == "potion") || (input == "p")) {
@@ -322,6 +385,31 @@ int main() {
                         } else {
                             cout << " You've slain the monster!" << endl;
                             game_stats(1, 0);
+                            int prog = progress(0, 0);
+                            if (prog == 7) {
+                                cout << endl << endl << "-------------------------" << endl << "Squinting into the distance, you can make out the faint outline of a tall structure. What could it be, and what could be inside?" << endl;
+                            } else if (prog == 15) {
+                                cout << endl << endl << "-------------------------" << endl << "You now can clearly see a castle in the near distance - no more than 300 yards away. Is it full of treasure?" << endl << "Is it empty? Or does a more terrible monster than any you've faced reside in those walls?" << endl;
+                            } else if (prog == 19) {
+                                cout << endl << endl << "-------------------------" << endl << "You stand mere meters away from the great entrance to the towering castle. Only one more monster stands between" << endl << "you and whatever is inside. Can you survive one last battle?" << endl;
+                            } else if (prog == 20) {
+                                cout << endl << endl << "-------------------------" << endl << "You defeat the last monster, and the path to the castle is at last unobstructed. You tidy up your armor, open the" << endl << "great steel door, and stride through the open doorway. The air smells dusty and ancient in your nostrils, as if you're" << endl << "the first soul to enter this great room in centuries. The ceiling is at least 30 meters high, and a faded," << endl << "ornate, red rug leads from the entrance up a flight of stairs." << endl;
+                                wait();
+                                cout << endl << "You climb the staircase and find yourself 20 meters away from a regal throne. Sitting in the seat, rather than a person, is" << endl << "an open chest. From where you stand, you can make out a pile of gold within the chest, and the glint of (likely)" << endl << "priceless jewels. You're overcome with emotion, thinking about all of the trials and tribulations you persevered" << endl << "through to get here. In this moment, you know it was all worth it, and tears stream down your cheeks. You raise your" << endl << "face to the heavens and let out a cry of victory, at last feeling that you've accomplished everything you've wanted to in this life." << endl << endl << endl << "Suddenly, you hear creaking in the ancient walls of the castle. It seems that the reverberations of your triumphant cry have pushed" << endl << "this tired foundation past its limits. In horror, you watch the ceiling above you crumble and open to expose the sky above." << endl << "You can't tell if it's the sound of the crumbling walls, but you hear a deep rumble that for a moment sounds like" << endl << "God himself is laughing at your untimely hubris." << endl << endl << endl << "A great chunk of the ceiling falls on your head, and you die instantly." << endl;
+                                wait();
+                                cout << endl << "Would you like to play again? (Y/N)" << endl;
+                                do {
+                                    cin >> input;
+                                    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+                                    if ((input == "y") || (input == "yes")) {
+                                        main();
+                                    } else if ((input == "n") || (input == "no")) {
+                                        cout << endl << "I think you should play again. Would you like to play again? (Y)" << endl;
+                                    } else {
+                                        cout << endl << "Command not recognized! Would you like to play again? (Y/N)" << endl;
+                                    }
+                                } while (!pass);
+                            }
                         }
                         pass = 1;
                     } else if ((input == "potion") || (input == "p")) {
@@ -347,6 +435,31 @@ int main() {
                         } else {
                             cout << " You've slain the monster!" << endl;
                             game_stats(1, 0);
+                            int prog = progress(0, 0);
+                            if (prog == 7) {
+                                cout << endl << endl << "-------------------------" << endl << "Squinting into the distance, you can make out the faint outline of a tall structure. What could it be, and what could be inside?" << endl;
+                            } else if (prog == 15) {
+                                cout << endl << endl << "-------------------------" << endl << "You now can clearly see a castle in the near distance - no more than 300 yards away. Is it full of treasure?" << endl << "Is it empty? Or does a more terrible monster than any you've faced reside in those walls?" << endl;
+                            } else if (prog == 19) {
+                                cout << endl << endl << "-------------------------" << endl << "You stand mere meters away from the great entrance to the towering castle. Only one more monster stands between" << endl << "you and whatever is inside. Can you survive one last battle?" << endl;
+                            } else if (prog == 20) {
+                                cout << endl << endl << "-------------------------" << endl << "You defeat the last monster, and the path to the castle is at last unobstructed. You tidy up your armor, open the" << endl << "great steel door, and stride through the open doorway. The air smells dusty and ancient in your nostrils, as if you're" << endl << "the first soul to enter this great room in centuries. The ceiling is at least 30 meters high, and a faded," << endl << "ornate rug leads from the entrance up a flight of stairs." << endl;
+                                wait();
+                                cout << endl << "You climb the staircase and find yourself 20 meters away from a regal throne. Sitting in the seat, rather than a person, is" << endl << "an open chest. From where you stand, you can make out a pile of gold within the chest, and the glint of (likely)" << endl << "priceless jewels. You're overcome with emotion, thinking about all of the trials and tribulations you persevered" << endl << "through to get here. In this moment, you know it was all worth it, and tears stream down your cheeks. You raise your" << endl << "face to the heavens and let out a cry of victory, at last feeling that you've accomplished everything you've wanted to in this life." << endl << endl << endl << "Suddenly, you hear creaking in the ancient walls of the castle. It seems that the reverberations of your triumphant cry have pushed" << endl << "this tired foundation past its limits. In horror, you watch the ceiling above you crumble and open to expose the sky above." << endl << "You can't tell if it's the sound of the crumbling walls, but you hear a deep rumble that for a moment sounds like" << endl << "God himself is laughing at your untimely hubris." << endl << endl << endl << "A great chunk of the ceiling falls on your head, and you die instantly." << endl;
+                                wait();
+                                cout << endl << "Would you like to play again? (Y/N)" << endl;
+                                do {
+                                    cin >> input;
+                                    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+                                    if ((input == "y") || (input == "yes")) {
+                                        main();
+                                    } else if ((input == "n") || (input == "no")) {
+                                        cout << endl << "I think you should play again. Would you like to play again? (Y)" << endl;
+                                    } else {
+                                        cout << endl << "Command not recognized! Would you like to play again? (Y/N)" << endl;
+                                    }
+                                } while (!pass);
+                            }
                         }
                         pass = 1;
                     } else if ((input == "potion") || (input == "p")) {
